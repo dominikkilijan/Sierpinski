@@ -28,10 +28,10 @@ def Tetron(i, j, k):
 def draw_tetrahedron(tetrahedron, colors):
     glBegin(GL_TRIANGLES)
     for i, face in enumerate([
-        (tetrahedron[1], tetrahedron[0], tetrahedron[2]),  # jasnozolty 021,102,210 widac ale zle,
-        (tetrahedron[0], tetrahedron[3], tetrahedron[2]),  # cyjanowy
-        (tetrahedron[0], tetrahedron[1], tetrahedron[3]),  # niebieski
-        (tetrahedron[3], tetrahedron[1], tetrahedron[2])  # liliowy 123,231,312 widac ale zolty sie przebija
+        (tetrahedron[0], tetrahedron[1], tetrahedron[2]),  # Fioletowy
+        (tetrahedron[0], tetrahedron[2], tetrahedron[3]),  # Niebieski
+        (tetrahedron[0], tetrahedron[3], tetrahedron[1]),  # Granatowy
+        (tetrahedron[1], tetrahedron[3], tetrahedron[2])  # Liliowy
     ]):
         glColor3ub(*colors[i])
         for vertex in face:
@@ -58,14 +58,15 @@ def main():
     pygame.init()
     display = (800, 600)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
-    gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
-    glTranslatef(-n2*2, -n2*1.2, -9*n2)
+    gluPerspective(45, (display[0] / display[1]), 0.1, 100.0)
+    glTranslatef(0, 0, -3*n2**2)
 
     # glEnable(GL_LIGHTING)
     # glEnable(GL_LIGHT0)
     # glEnable(GL_COLOR_MATERIAL)
     #
     glEnable(GL_DEPTH_TEST)
+    glDepthFunc(GL_LESS)
     #glFrontFace(GL_CCW)
     spinning = False
     while True:
@@ -73,13 +74,43 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
                     spinning = not spinning
+                if event.key == pygame.K_r:
+                    glLoadIdentity()
+                    glTranslatef(0, 0, 0)
+                # przesuwanie piramidy
+                if event.key == pygame.K_LEFT:
+                    glTranslate(-1,0,0)
+                if event.key == pygame.K_RIGHT:
+                    glTranslate(1,0,0)
+                if event.key == pygame.K_UP:
+                    glTranslate(0,1,0)
+                if event.key == pygame.K_DOWN:
+                    glTranslate(0,-1,0)
+                # obracanie piramidy
+                if event.key == pygame.K_j:
+                    glRotatef(10, 0, -1, 0)
+                if event.key == pygame.K_l:
+                    glRotatef(10, 0, 1, 0)
+                if event.key == pygame.K_i:
+                    glRotatef(10, -1, 0, 0)
+                if event.key == pygame.K_k:
+                    glRotatef(10, 1, 0, 0)
+
+        #zoomowanie
+        if event.type == pygame.MOUSEWHEEL:
+            if event.y > 0:
+                glScale(1.1, 1.1, 1.1)
+                event.y = 0
+            if event.y < 0:
+                glScale(0.9, 0.9, 0.9)
+                event.y = 0
 
 
         if spinning:
-            glRotatef(1*n2/2, 0, 1, 0)
+            glRotatef(1*n2/2, 3, 2, 0)
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_CULL_FACE)  # Enable face culling
