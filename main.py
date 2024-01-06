@@ -11,10 +11,10 @@ vertices = (
     [0.5, 1 / 3 * 3 ** 0.5 / 2, ((3 ** 0.5 / 2) ** 2 - (1 / 3 * 3 ** 0.5 / 2) ** 2) ** 0.5]
 )
 colors = [
-    (17, 1, 59),  # Indygo
-    (51, 13, 28),  # Ciemny róż
-    (7, 38, 3),  # Ciemna zielen
-    (181, 93, 5)  # Pomaranczowy
+    (182, 209, 92),  # Jasnozolty
+    (11, 144, 156),  # Cyjanowy
+    (21, 11, 156),  # Niebieski
+    (134, 63, 191)  # Liliowy
 ]
 def Tetron(i, j, k):
     return [
@@ -28,10 +28,10 @@ def Tetron(i, j, k):
 def draw_tetrahedron(tetrahedron, colors):
     glBegin(GL_TRIANGLES)
     for i, face in enumerate([
-        (tetrahedron[0], tetrahedron[1], tetrahedron[2]),
-        (tetrahedron[0], tetrahedron[2], tetrahedron[3]),
-        (tetrahedron[0], tetrahedron[3], tetrahedron[1]),
-        (tetrahedron[1], tetrahedron[3], tetrahedron[2])
+        (tetrahedron[0], tetrahedron[2], tetrahedron[1]),  # jasnozolty
+        (tetrahedron[0], tetrahedron[3], tetrahedron[2]),  # cyjanowy
+        (tetrahedron[0], tetrahedron[1], tetrahedron[3]),  # niebieski
+        (tetrahedron[1], tetrahedron[2], tetrahedron[3])  # liliowy
     ]):
         glColor3ub(*colors[i])
         for vertex in face:
@@ -49,21 +49,8 @@ def SiPyramid(n, i, j, k):
                            2 ** (n - 1) * vertices[u][2] + k))
     return s
 
-def light():
-    glLight(GL_LIGHT0, GL_POSITION,  (5, 0, 0, 0)) # źródło światła left, top, front
-
-    # Ustawienie koloru światła otoczenia
-    glLightfv(GL_LIGHT0, GL_AMBIENT, (1.0, 1.0, 1.0, 1.0))
-
-    # Ustawienie koloru światła rozproszonego
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, (1.0, 1.0, 1.0, 1.0))
-
-    # Ustawienie koloru światła wypukłego
-    glLightfv(GL_LIGHT0, GL_SPECULAR, (1.0, 1.0, 1.0, 1.0))
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE )
-
 def main():
-    n = 3
+    n = 2
     n2 = n
     if n == 0:
         n2 += 1
@@ -86,12 +73,11 @@ def main():
                 pygame.quit()
                 quit()
 
-        glRotatef(1*n2/4, 3, 1, 1)
+        glRotatef(1, 4, 3, 2)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
+        glEnable(GL_CULL_FACE)  # Enable face culling
         for tetrahedron in SiPyramid(n, 0, 0, 0):
             draw_tetrahedron(tetrahedron, colors)
-        #   light()
         pygame.display.flip()
         pygame.time.wait(10)
 
