@@ -5,15 +5,15 @@ from OpenGL.GLU import *
 
 # Punkty piramidy
 vertices = (
-    [0, 0, 0],
-    [1, 0, 0],
-    [0.5, 3 ** 0.5 / 2, 0],
-    [0.5, 1 / 3 * 3 ** 0.5 / 2, ((3 ** 0.5 / 2) ** 2 - (1 / 3 * 3 ** 0.5 / 2) ** 2) ** 0.5]
+    [-0.5,   0,             -1 / 3 * 3 ** 0.5 / 2], # lewy tył
+    [ 0.5,   0,             -1 / 3 * 3 ** 0.5 / 2], # prawy tył
+    [ 0,     0,              3 ** 0.5 / 3],         # przód
+    [ 0,     3 ** 0.5 / 2,   0]                     # szpic
 )
-colors = [
-    (182, 209, 92),  # Jasnozolty
-    (11, 144, 156),  # Cyjanowy
-    (21, 11, 156),  # Niebieski
+colors1 = [
+    (68, 16, 110),  # Fioletowy
+    (18, 16, 92),  # Niebieski
+    (2, 0, 56),  # Granatowy
     (134, 63, 191)  # Liliowy
 ]
 def Tetron(i, j, k):
@@ -50,7 +50,7 @@ def SiPyramid(n, i, j, k):
     return s
 
 def main():
-    n = 1
+    n = 3
     n2 = n
     if n == 0:
         n2 += 1
@@ -67,17 +67,24 @@ def main():
     #
     glEnable(GL_DEPTH_TEST)
     #glFrontFace(GL_CCW)
+    spinning = False
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    spinning = not spinning
 
-        glRotatef(1*n2/2, 3, 2, 1)
+
+        if spinning:
+            glRotatef(1*n2/2, 0, 1, 0)
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_CULL_FACE)  # Enable face culling
         for tetrahedron in SiPyramid(n, 0, 0, 0):
-            draw_tetrahedron(tetrahedron, colors)
+            draw_tetrahedron(tetrahedron, colors1)
         pygame.display.flip()
         pygame.time.wait(10)
 
