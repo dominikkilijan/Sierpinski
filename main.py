@@ -28,10 +28,10 @@ def Tetron(i, j, k):
 def draw_tetrahedron(tetrahedron, colors):
     glBegin(GL_TRIANGLES)
     for i, face in enumerate([
-        (tetrahedron[0], tetrahedron[2], tetrahedron[1]),  # jasnozolty
+        (tetrahedron[1], tetrahedron[0], tetrahedron[2]),  # jasnozolty 021,102,210 widac ale zle,
         (tetrahedron[0], tetrahedron[3], tetrahedron[2]),  # cyjanowy
         (tetrahedron[0], tetrahedron[1], tetrahedron[3]),  # niebieski
-        (tetrahedron[1], tetrahedron[2], tetrahedron[3])  # liliowy
+        (tetrahedron[3], tetrahedron[1], tetrahedron[2])  # liliowy 123,231,312 widac ale zolty sie przebija
     ]):
         glColor3ub(*colors[i])
         for vertex in face:
@@ -50,7 +50,7 @@ def SiPyramid(n, i, j, k):
     return s
 
 def main():
-    n = 2
+    n = 1
     n2 = n
     if n == 0:
         n2 += 1
@@ -65,15 +65,15 @@ def main():
     # glEnable(GL_LIGHT0)
     # glEnable(GL_COLOR_MATERIAL)
     #
-    # glEnable(GL_DEPTH_TEST)
-
+    glEnable(GL_DEPTH_TEST)
+    #glFrontFace(GL_CCW)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
 
-        glRotatef(1, 4, 3, 2)
+        glRotatef(1*n2/2, 3, 2, 1)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_CULL_FACE)  # Enable face culling
         for tetrahedron in SiPyramid(n, 0, 0, 0):
