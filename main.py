@@ -11,6 +11,7 @@ vertices = (
     [0.5, 1 / 3 * 3 ** 0.5 / 2, ((3 ** 0.5 / 2) ** 2 - (1 / 3 * 3 ** 0.5 / 2) ** 2) ** 0.5]
 )
 
+
 def Tetron(i, j, k):
     return [
         [sum(x) for x in zip(vertices[0], [i, j, k])],
@@ -46,11 +47,12 @@ def SiPyramid(n, i, j, k):
 
 
 def main():
+    n = 4
     pygame.init()
     display = (800, 600)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
-    glTranslatef(0, 0, -15)
+    glTranslatef(-n, -n, -10*n)
 
 
     while True:
@@ -59,11 +61,11 @@ def main():
                 pygame.quit()
                 quit()
 
-        glRotatef(1, 3, 1, 1 )
+        glRotatef(1*n/2, 3, 1, 1 )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # Adjust the range of the SiPyramid function based on your needs
-        for tetrahedron in SiPyramid(3, 0, 0, 0):
+        for tetrahedron in SiPyramid(n, 0, 0, 0):
             draw_tetrahedron(tetrahedron)
 
         pygame.display.flip()
