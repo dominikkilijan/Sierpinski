@@ -11,7 +11,20 @@ vertices = (
     [ 0,     0,              3 ** 0.5 / 3],         # przód
     [ 0,     3 ** 0.5 / 2,   0]                     # szpic
 )
+
 colors1 = [
+    (89, 5, 5),
+    (148, 3, 3),
+    (181, 71, 7),
+    (181, 111, 7)
+]
+colors2  = [
+    (66, 145, 20),
+    (47, 102, 15),
+    (32, 71, 9),
+    (14, 31, 4)
+]
+colors3 = [
     (68, 16, 110),  # Fioletowy
     (18, 16, 92),  # Niebieski
     (2, 0, 56),  # Granatowy
@@ -19,7 +32,7 @@ colors1 = [
 ]
 
 def loadTexture():
-    textureSurface = pygame.image.load('cegly.jpg').convert()
+    textureSurface = pygame.image.load('Missing.jpg').convert()
     textureData = pygame.image.tostring(textureSurface, "RGBA")
     width = textureSurface.get_width()
     height = textureSurface.get_height()
@@ -44,37 +57,34 @@ def loadTexture():
 def draw_tetrahedron_with_texture(tetrahedron):
     glBegin(GL_TRIANGLES)
     for i, face in enumerate([
-        (tetrahedron[0], tetrahedron[1], tetrahedron[2]),  # Fioletowy dobrze
-        (tetrahedron[0], tetrahedron[2], tetrahedron[3]),  # Niebieski dobrze
-        (tetrahedron[0], tetrahedron[3], tetrahedron[1]),  # Granatowy pod kątem
-        (tetrahedron[1], tetrahedron[3], tetrahedron[2])  # Liliowy dobrze
+        (tetrahedron[0], tetrahedron[1], tetrahedron[2]),
+        (tetrahedron[0], tetrahedron[2], tetrahedron[3]),
+        (tetrahedron[0], tetrahedron[3], tetrahedron[1]),
+        (tetrahedron[1], tetrahedron[3], tetrahedron[2])
     ]):
         for j, vertex in enumerate(face):
-            if i == 0:  # Fioletowy
+            if i == 0:
                 if j == 0:
                     glTexCoord2f(0.0, 0.0)
                 elif j == 1:
                     glTexCoord2f(0.5, 0.0)
                 elif j == 2:
                     glTexCoord2f(0.25, 0.5)
-            elif i == 1:  # Niebieski
-                #glTexCoord2f(j / 2.0, 1.0 - j / 2.0)
+            elif i == 1:
                 if j == 0:
                     glTexCoord2f(0.0, 0.0)
                 elif j == 1:
                     glTexCoord2f(0.5, 0.0)
                 elif j == 2:
                     glTexCoord2f(0.25, 0.5)
-            elif i == 2:  # Granatowy
-                #glTexCoord2f(0.5 + 0.5 * vertex[0], 0.5 + 0.5 * vertex[1])
+            elif i == 2:
                 if j == 0:
                     glTexCoord2f(0.5, 0.5)
                 elif j == 1:
                     glTexCoord2f(0.75, 1.0)
                 elif j == 2:
                     glTexCoord2f(1.0, 0.5)
-            elif i == 3:  # Liliowy
-                #glTexCoord2f(vertex[0], vertex[1])
+            elif i == 3:
                 if j == 0:
                     glTexCoord2f(0.5, 0.5)
                 elif j == 1:
@@ -118,7 +128,7 @@ def SiPyramid(n, i, j, k):
     return s
 
 def main():
-    n = 0
+    n = 4
     n2 = n
     if n == 0:
         n2 += 1
@@ -138,14 +148,14 @@ def main():
     glDepthFunc(GL_LESS)
     #glFrontFace(GL_CCW)
     spinning = False
-    colorsOrTex = 2
+    colorsOrTex = 4
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_SPACE:
                     spinning = not spinning
                 if event.key == pygame.K_r:
                     glLoadIdentity()
@@ -173,6 +183,10 @@ def main():
                     colorsOrTex = 1
                 if event.key == pygame.K_2:
                     colorsOrTex = 2
+                if event.key == pygame.K_3:
+                    colorsOrTex = 3
+                if event.key == pygame.K_4:
+                    colorsOrTex = 4
 
         #zoomowanie
         if event.type == pygame.MOUSEWHEEL:
@@ -193,6 +207,11 @@ def main():
             if (colorsOrTex == 1):
                 draw_tetrahedron(tetrahedron, colors1)
             elif (colorsOrTex == 2):
+                draw_tetrahedron(tetrahedron, colors2)
+            if (colorsOrTex == 3):
+                draw_tetrahedron(tetrahedron, colors3)
+            if (colorsOrTex == 4):
+                glColor3f(1.0, 1.0, 1.0)
                 glEnable(GL_TEXTURE_2D)
                 draw_tetrahedron_with_texture(tetrahedron)
                 glDisable(GL_TEXTURE_2D)
