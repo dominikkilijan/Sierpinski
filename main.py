@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
+import numpy
 
 # Punkty piramidy
 vertices = (
@@ -16,6 +17,49 @@ colors1 = [
     (2, 0, 56),  # Granatowy
     (134, 63, 191)  # Liliowy
 ]
+
+def loadTexture():
+    textureSurface = pygame.image.load('cegly.jpg').convert()
+    textureData = pygame.image.tostring(textureSurface, "RGBA")
+    width = textureSurface.get_width()
+    height = textureSurface.get_height()
+
+    glEnable(GL_TEXTURE_2D)
+    texid = glGenTextures(1)
+
+    glBindTexture(GL_TEXTURE_2D, texid)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+
+    #glGenerateTextureMipmap(GL_TEXTURE_2D)
+
+    return texid
+
+
+def draw_tetrahedron_with_texture(tetrahedron):
+    glEnable(GL_TEXTURE_2D)
+
+    glBegin(GL_TRIANGLES)
+    for i, face in enumerate([
+        (tetrahedron[0], tetrahedron[1], tetrahedron[2]),  # Fioletowy
+        (tetrahedron[0], tetrahedron[2], tetrahedron[3]),  # Niebieski
+        (tetrahedron[0], tetrahedron[3], tetrahedron[1]),  # Granatowy
+        (tetrahedron[1], tetrahedron[3], tetrahedron[2])  # Liliowy
+    ]):
+        glTexCoord2f(0.0, 0.0)
+        glVertex3fv(face[0])
+        glTexCoord2f(1.0, 0.0)
+        glVertex3fv(face[1])
+        glTexCoord2f(0.5, 1.0)
+        glVertex3fv(face[2])
+    glEnd()
+
+    glDisable(GL_TEXTURE_2D)
 def Tetron(i, j, k):
     return [
         [sum(x) for x in zip(vertices[0], [i, j, k])],
@@ -61,6 +105,7 @@ def main():
     gluPerspective(45, (display[0] / display[1]), 0.1, 100.0)
     glTranslatef(0, 0, -3*n2**2)
 
+    loadTexture()
     # glEnable(GL_LIGHTING)
     # glEnable(GL_LIGHT0)
     # glEnable(GL_COLOR_MATERIAL)
@@ -69,6 +114,7 @@ def main():
     glDepthFunc(GL_LESS)
     #glFrontFace(GL_CCW)
     spinning = False
+    colorsOrTex = 1
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -98,6 +144,11 @@ def main():
                     glRotatef(10, -1, 0, 0)
                 if event.key == pygame.K_k:
                     glRotatef(10, 1, 0, 0)
+                # wyglad piramidy
+                if event.key == pygame.K_1:
+                    colorsOrTex = 1
+                if event.key == pygame.K_2:
+                    colorsOrTex = 2
 
         #zoomowanie
         if event.type == pygame.MOUSEWHEEL:
@@ -115,7 +166,10 @@ def main():
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_CULL_FACE)  # Enable face culling
         for tetrahedron in SiPyramid(n, 0, 0, 0):
-            draw_tetrahedron(tetrahedron, colors1)
+            if (colorsOrTex == 1):
+                draw_tetrahedron(tetrahedron, colors1)
+            elif (colorsOrTex == 2):
+                draw_tetrahedron_with_texture(tetrahedron)
         pygame.display.flip()
         pygame.time.wait(10)
 
