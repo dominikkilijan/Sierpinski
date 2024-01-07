@@ -42,24 +42,48 @@ def loadTexture():
 
 
 def draw_tetrahedron_with_texture(tetrahedron):
-    glEnable(GL_TEXTURE_2D)
-
     glBegin(GL_TRIANGLES)
     for i, face in enumerate([
-        (tetrahedron[0], tetrahedron[1], tetrahedron[2]),  # Fioletowy
-        (tetrahedron[0], tetrahedron[2], tetrahedron[3]),  # Niebieski
-        (tetrahedron[0], tetrahedron[3], tetrahedron[1]),  # Granatowy
-        (tetrahedron[1], tetrahedron[3], tetrahedron[2])  # Liliowy
+        (tetrahedron[0], tetrahedron[1], tetrahedron[2]),  # Fioletowy dobrze
+        (tetrahedron[0], tetrahedron[2], tetrahedron[3]),  # Niebieski dobrze
+        (tetrahedron[0], tetrahedron[3], tetrahedron[1]),  # Granatowy pod kątem
+        (tetrahedron[1], tetrahedron[3], tetrahedron[2])  # Liliowy dobrze
     ]):
-        glTexCoord2f(0.0, 0.0)
-        glVertex3fv(face[0])
-        glTexCoord2f(1.0, 0.0)
-        glVertex3fv(face[1])
-        glTexCoord2f(0.5, 1.0)
-        glVertex3fv(face[2])
-    glEnd()
+        for j, vertex in enumerate(face):
+            if i == 0:  # Fioletowy
+                if j == 0:
+                    glTexCoord2f(0.0, 0.0)
+                elif j == 1:
+                    glTexCoord2f(0.5, 0.0)
+                elif j == 2:
+                    glTexCoord2f(0.25, 0.5)
+            elif i == 1:  # Niebieski
+                #glTexCoord2f(j / 2.0, 1.0 - j / 2.0)
+                if j == 0:
+                    glTexCoord2f(0.0, 0.0)
+                elif j == 1:
+                    glTexCoord2f(0.5, 0.0)
+                elif j == 2:
+                    glTexCoord2f(0.25, 0.5)
+            elif i == 2:  # Granatowy
+                #glTexCoord2f(0.5 + 0.5 * vertex[0], 0.5 + 0.5 * vertex[1])
+                if j == 0:
+                    glTexCoord2f(0.5, 0.5)
+                elif j == 1:
+                    glTexCoord2f(0.75, 1.0)
+                elif j == 2:
+                    glTexCoord2f(1.0, 0.5)
+            elif i == 3:  # Liliowy
+                #glTexCoord2f(vertex[0], vertex[1])
+                if j == 0:
+                    glTexCoord2f(0.5, 0.5)
+                elif j == 1:
+                    glTexCoord2f(0.75, 1.0)
+                elif j == 2:
+                    glTexCoord2f(1.0, 0.5)
 
-    glDisable(GL_TEXTURE_2D)
+            glVertex3fv(vertex)
+    glEnd()
 def Tetron(i, j, k):
     return [
         [sum(x) for x in zip(vertices[0], [i, j, k])],
@@ -94,7 +118,7 @@ def SiPyramid(n, i, j, k):
     return s
 
 def main():
-    n = 3
+    n = 0
     n2 = n
     if n == 0:
         n2 += 1
@@ -114,7 +138,7 @@ def main():
     glDepthFunc(GL_LESS)
     #glFrontFace(GL_CCW)
     spinning = False
-    colorsOrTex = 1
+    colorsOrTex = 2
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -132,9 +156,9 @@ def main():
                 if event.key == pygame.K_RIGHT:
                     glTranslate(1,0,0)
                 if event.key == pygame.K_UP:
-                    glTranslate(0,1,0)
+                    glTranslate(0,0.51,0)
                 if event.key == pygame.K_DOWN:
-                    glTranslate(0,-1,0)
+                    glTranslate(0,-0.51,0)
                 # obracanie piramidy
                 if event.key == pygame.K_j:
                     glRotatef(10, 0, -1, 0)
@@ -169,7 +193,9 @@ def main():
             if (colorsOrTex == 1):
                 draw_tetrahedron(tetrahedron, colors1)
             elif (colorsOrTex == 2):
+                glEnable(GL_TEXTURE_2D)
                 draw_tetrahedron_with_texture(tetrahedron)
+                glDisable(GL_TEXTURE_2D)
         pygame.display.flip()
         pygame.time.wait(10)
 
