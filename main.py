@@ -63,28 +63,14 @@ def draw_tetrahedron_with_texture(tetrahedron):
         (tetrahedron[1], tetrahedron[3], tetrahedron[2])
     ]):
         for j, vertex in enumerate(face):
-            if i == 0:
+            if i == 0 or i == 1:
                 if j == 0:
                     glTexCoord2f(0.0, 0.0)
                 elif j == 1:
                     glTexCoord2f(0.5, 0.0)
                 elif j == 2:
                     glTexCoord2f(0.25, 0.5)
-            elif i == 1:
-                if j == 0:
-                    glTexCoord2f(0.0, 0.0)
-                elif j == 1:
-                    glTexCoord2f(0.5, 0.0)
-                elif j == 2:
-                    glTexCoord2f(0.25, 0.5)
-            elif i == 2:
-                if j == 0:
-                    glTexCoord2f(0.5, 0.5)
-                elif j == 1:
-                    glTexCoord2f(0.75, 1.0)
-                elif j == 2:
-                    glTexCoord2f(1.0, 0.5)
-            elif i == 3:
+            elif i == 2 or i == 3:
                 if j == 0:
                     glTexCoord2f(0.5, 0.5)
                 elif j == 1:
