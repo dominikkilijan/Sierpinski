@@ -74,10 +74,11 @@ def draw_light_cube(light_position):
     # Draw a small cube
     size = 0.1
     glBegin(GL_QUADS)
-    glVertex3f(-size, -size, -size)
+
     glVertex3f(size, -size, -size)
-    glVertex3f(size, size, -size)
+    glVertex3f(-size, -size, -size)
     glVertex3f(-size, size, -size)
+    glVertex3f(size, size, -size)
 
     glVertex3f(-size, -size, size)
     glVertex3f(size, -size, size)
@@ -90,14 +91,14 @@ def draw_light_cube(light_position):
     glVertex3f(-size, -size, size)
 
     glVertex3f(-size, size, -size)
-    glVertex3f(size, size, -size)
-    glVertex3f(size, size, size)
     glVertex3f(-size, size, size)
+    glVertex3f(size, size, size)
+    glVertex3f(size, size, -size)
 
     glVertex3f(-size, -size, -size)
-    glVertex3f(-size, size, -size)
-    glVertex3f(-size, size, size)
     glVertex3f(-size, -size, size)
+    glVertex3f(-size, size, size)
+    glVertex3f(-size, size, -size)
 
     glVertex3f(size, -size, -size)
     glVertex3f(size, size, -size)
@@ -143,7 +144,6 @@ def Tetron(i, j, k):
 
 
 def draw_tetrahedron(tetrahedron, colors):
-    glEnable(GL_LIGHTING)
     glBegin(GL_TRIANGLES)
     for i, face in enumerate([
         (tetrahedron[0], tetrahedron[1], tetrahedron[2]),  # Fioletowy
@@ -156,7 +156,6 @@ def draw_tetrahedron(tetrahedron, colors):
         for vertex in face:
             glVertex3fv(vertex)
     glEnd()
-    glDisable(GL_LIGHTING)
 
 def SiPyramid(n, i, j, k):
     if n == 0:
@@ -202,6 +201,7 @@ def main():
     glDepthFunc(GL_LESS)
     #glFrontFace(GL_CCW)
     spinning = False
+    lighting = True
     colorsOrTex = 4
     while True:
         for event in pygame.event.get():
@@ -211,10 +211,8 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     spinning = not spinning
-                # if event.key == pygame.K_r:
-                #     # coś jest nie tak z resetem, przyjrzyj się później
-                #     glLoadIdentity()
-                #     glTranslatef(0, 0, 0)
+                if event.key == pygame.K_s:
+                    lighting = not lighting
                 # przesuwanie piramidy
                 if event.key == pygame.K_LEFT:
                     glTranslate(-1,0,0)
@@ -274,9 +272,12 @@ def main():
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_CULL_FACE)  # Enable face culling
-
-        glLightfv(GL_LIGHT0, GL_POSITION, light_position)
-        draw_light_cube(light_position)
+        if lighting:
+            glEnable(GL_LIGHTING)
+            glLightfv(GL_LIGHT0, GL_POSITION, light_position)
+            draw_light_cube(light_position)
+        else:
+            glDisable(GL_LIGHTING)
 
         for tetrahedron in SiPyramid(n, 0, 0, 0):
             if (colorsOrTex == 1):
